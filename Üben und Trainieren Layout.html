@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mathe-Übungsband Klasse 2</title>
+<style>
+:root {
+  --bg:#f6f3ea; --paper:#fffdf8; --ink:#24282b; --muted:#6a7074;
+  --yellow:#f1c94a; --blue:#dcebf5; --green:#dcefd9; --orange:#f5e2bf; --line:#ded9ce;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;background:var(--bg);color:var(--ink)}
+body{overflow:hidden}
+.app{display:grid;grid-template-columns:280px 1fr;height:100vh}
+.sidebar{background:#22272a;color:white;padding:18px 14px;overflow:auto}
+.brand{padding:4px 8px 16px;font-weight:800;letter-spacing:.03em}
+.brand small{display:block;color:#c9d0d3;font-weight:500;margin-top:4px}
+.weekbtn{width:100%;border:0;background:transparent;color:#e8ecee;text-align:left;padding:10px 10px;border-radius:10px;cursor:pointer;font-size:14px}
+.weekbtn:hover,.weekbtn.active{background:#3a4145}
+.weekbtn span{opacity:.65;margin-right:6px}
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{height:62px;display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.65);backdrop-filter:blur(8px)}
+.title{font-weight:800;font-size:20px;flex:1}
+.btn{border:1px solid var(--line);background:white;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--yellow);border-color:var(--yellow)}
+.content{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
+.card{width:min(1180px,96%);min-height:610px;background:var(--paper);border:1px solid var(--line);border-radius:24px;box-shadow:0 12px 30px rgba(0,0,0,.06);padding:28px 32px;display:flex;flex-direction:column}
+.kicker{font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:34px;margin:6px 0 8px;line-height:1.1}
+.goal{font-size:19px;color:var(--muted);margin-bottom:18px}
+.phasebar{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.phase{padding:8px 12px;border-radius:999px;background:#eee;color:#555;font-size:13px;font-weight:800}
+.phase.active{background:var(--yellow);color:#222}
+.panel{flex:1;display:flex;flex-direction:column}
+.panel h2{font-size:26px;margin:0 0 12px}
+.big{font-size:30px;line-height:1.45}
+.tasks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1}
+.level{border:1px solid var(--line);border-radius:18px;padding:18px;background:white}
+.level h3{margin:0 0 10px;font-size:18px}
+.level ul,.steps{margin:0;padding-left:22px;font-size:20px;line-height:1.55}
+.strategy{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:stretch}
+.example{border-radius:18px;background:var(--blue);padding:22px;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center}
+.say{border-radius:18px;background:white;border:1px solid var(--line);padding:22px;font-size:23px;display:flex;align-items:center}
+.gamebox{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.timerbox{margin-top:18px;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:#f3f1ea}
+.time{font-variant-numeric:tabular-nums;font-weight:900;font-size:28px;min-width:90px}
+.materials{font-size:15px;color:var(--muted);margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.teacher{margin-top:14px;border:1px dashed #bdb7a8;border-radius:14px;padding:12px 14px;background:#fffaf0;font-size:14px;color:#555}
+.teacher summary{font-weight:800;cursor:pointer}
+
+.qmstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.qmchip{border-radius:12px;padding:10px 12px;background:#f4f2eb;font-size:13px;line-height:1.35}
+.qmchip b{display:block;margin-bottom:3px}
+.thinkprompt{margin-top:12px;padding:13px 15px;border-left:5px solid var(--yellow);background:#fffaf0;border-radius:10px;font-size:16px}
+.footerline{margin-top:16px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+.fullscreen .sidebar,.fullscreen .topbar{display:none}
+.fullscreen .app{grid-template-columns:1fr}
+.fullscreen .content{padding:0}
+.fullscreen .card{width:100vw;height:100vh;min-height:100vh;border-radius:0;border:0;box-shadow:none;padding:40px 54px}
+.fullscreen h1{font-size:44px}
+.fullscreen .goal{font-size:23px}
+.fullscreen .big{font-size:38px}
+.fullscreen .level ul,.fullscreen .steps{font-size:27px}
+.fullscreen .example{font-size:40px}
+.navbottom{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+@media(max-width:900px){
+ .app{grid-template-columns:1fr} .sidebar{display:none} .tasks,.strategy,.gamebox{grid-template-columns:1fr} body{overflow:auto} .main{min-height:100vh}
+}
+
+.numbered-tasks{
+  display:grid;
+  gap:10px;
+  margin-top:6px;
+}
+.numbered-task{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr);
+  align-items:start;
+  column-gap:18px;
+}
+.task-no{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--yellow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  font-weight:900;
+  line-height:1;
+  margin-top:4px;
+}
+.task-content{
+  min-width:0;
+}
+.fullscreen .numbered-task{
+  grid-template-columns:58px minmax(0,1fr);
+  column-gap:24px;
+}
+.fullscreen .task-no{
+  width:46px;
+  height:46px;
+  font-size:19px;
+}
+
+
+.phase{display:flex;align-items:center;gap:8px}
+.phaseicon{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff;font-size:22px;box-shadow:0 2px 5px rgba(0,0,0,.08)}
+.heroicon{width:58px;height:58px;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;background:#fff;font-size:38px;box-shadow:0 5px 0 rgba(0,0,0,.08);margin-right:10px;vertical-align:middle}
+
+.qmchip{position:relative;padding-left:46px}
+.comic-mini{position:absolute;left:10px;top:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;font-size:18px;box-shadow:0 2px 4px rgba(0,0,0,.08)}
+.teacher{font-size:13.5px;line-height:1.3}
+.materials{display:flex;gap:8px;align-items:flex-start}
+.mat-icon{font-size:22px}
+.fullscreen .heroicon{width:70px;height:70px;font-size:46px}
+.fullscreen .phaseicon{width:42px;height:42px;font-size:27px}
+.fullscreen 
+
+
+.modebadge{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;font-weight:900;font-size:15px;margin:0 7px 10px 0}
+.mode-alone{background:#e8f2ff}.mode-partner{background:#e8f5e6}.mode-talk{background:#fff0cf}.mode-free{background:#f0e8ff}
+.blitzgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.blitzmain,.blitzplus{border-radius:18px;padding:18px;border:1px solid var(--line)}
+.blitzmain{background:#f8fbff}.blitzplus{background:#fff8d9;border:2px dashed #e3c14e}.blitzplus h3,.blitzmain h3{margin:0 0 10px}
+.sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 14px}.seqstep{border-radius:14px;padding:12px;text-align:center;font-weight:800;background:#f3f1eb}.seqstep strong{display:block;font-size:22px}
+.exchangebar{margin-top:14px;padding:12px 14px;border-radius:14px;background:#fff0cf;border:1px solid #ead39a;font-size:16px}
+@media(max-width:900px){.blitzgrid,.sequence{grid-template-columns:1fr}}
+
+
+/* Untere Meta-Hinweise wie Denken / Vernetzen / Darstellen / Begründen ausblenden */
+.qmstrip, .qm-chip-row, .quamath-strip { display:none !important; }
+
+
+/* ===== KINDGERECHTER FINALER FEINSCHLIFF ===== */
+:root{
+  --soft-shadow: 0 10px 24px rgba(70,60,40,.08);
+  --soft-shadow-small: 0 4px 10px rgba(70,60,40,.07);
+}
+body{
+  background:
+    radial-gradient(circle at 15% 10%, rgba(245,217,107,.18), transparent 24%),
+    radial-gradient(circle at 85% 85%, rgba(220,236,255,.22), transparent 26%),
+    var(--bg);
+}
+.app{
+  background:transparent;
+}
+.sidebar{
+  background:rgba(255,253,248,.96);
+  border-right:1px solid rgba(0,0,0,.06);
+  box-shadow:6px 0 24px rgba(70,60,40,.05);
+}
+.sidebar h1{
+  font-size:22px;
+  line-height:1.08;
+  margin-bottom:6px;
+}
+.sidebar .sub{
+  line-height:1.35;
+}
+.weekbtn{
+  border-radius:14px;
+  padding:10px 12px;
+  margin-bottom:6px;
+  transition:.15s ease;
+}
+.weekbtn:hover{
+  transform:translateX(2px);
+  box-shadow:var(--soft-shadow-small);
+}
+.weekbtn.active{
+  border:2px solid rgba(0,0,0,.08);
+  box-shadow:var(--soft-shadow-small);
+}
+.topbar{
+  background:rgba(245,241,231,.88);
+  backdrop-filter: blur(8px);
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+.topbar button{
+  border-radius:14px;
+  padding:10px 14px;
+  font-size:14px;
+}
+.main{
+  padding:22px 24px 34px;
+}
+.slide{
+  max-width:1220px;
+  margin:0 auto;
+}
+.titlebox{
+  background:rgba(255,253,248,.98);
+  border-radius:24px;
+  padding:20px 22px;
+  box-shadow:var(--soft-shadow);
+  border:1px solid rgba(0,0,0,.05);
+  margin-bottom:16px;
+}
+.titlebox h1,
+.titlebox h2{
+  letter-spacing:-.02em;
+}
+.phasebar{
+  gap:8px;
+  margin-bottom:14px;
+  padding:8px;
+  background:rgba(255,255,255,.55);
+  border-radius:18px;
+  border:1px solid rgba(0,0,0,.04);
+}
+.phase{
+  border-radius:16px;
+  padding:8px 11px;
+  font-size:13px;
+  font-weight:800;
+  background:#f2efe8;
+  transition:.15s ease;
+}
+.phase.active{
+  box-shadow:0 4px 10px rgba(70,60,40,.08);
+}
+.phaseicon{
+  width:36px;
+  height:36px;
+  font-size:23px;
+}
+.panel{
+  border-radius:24px;
+  padding:22px;
+  background:rgba(255,253,248,.98);
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:var(--soft-shadow);
+}
+.panel h2{
+  font-size:27px;
+  line-height:1.15;
+  margin-bottom:16px;
+  letter-spacing:-.02em;
+}
+.heroicon{
+  width:62px;
+  height:62px;
+  border-radius:20px;
+  font-size:40px;
+  box-shadow:0 5px 0 rgba(0,0,0,.07);
+}
+.modebadge{
+  font-size:14px;
+  letter-spacing:.02em;
+  padding:8px 13px;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:0 2px 5px rgba(0,0,0,.04);
+}
+.blitzgrid{
+  gap:16px;
+}
+.blitzmain,.blitzplus{
+  border-radius:20px;
+  padding:18px 18px 16px;
+  box-shadow:var(--soft-shadow-small);
+}
+.blitzmain h3,.blitzplus h3{
+  font-size:19px;
+  margin-bottom:12px;
+}
+.numbered-task{
+  grid-template-columns:48px minmax(0,1fr);
+  column-gap:14px;
+  align-items:center;
+  padding:5px 0;
+}
+.task-no{
+  width:40px;
+  height:40px;
+  font-size:16px;
+  box-shadow:0 3px 7px rgba(0,0,0,.06);
+}
+.task-content{
+  font-size:clamp(20px,2.3vw,29px);
+  line-height:1.25;
+  font-weight:760;
+  letter-spacing:.01em;
+}
+.sequence{
+  gap:12px;
+}
+.seqstep{
+  border-radius:18px;
+  min-height:126px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  box-shadow:var(--soft-shadow-small);
+}
+.seqstep strong{
+  font-size:27px;
+}
+.strategy{
+  gap:16px;
+}
+.example,.say{
+  border-radius:20px;
+  box-shadow:var(--soft-shadow-small);
+}
+.example{
+  font-size:clamp(30px,4vw,48px);
+  font-weight:850;
+}
+.say{
+  font-size:18px;
+  line-height:1.45;
+}
+.tasks{
+  gap:14px;
+}
+.level{
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--soft-shadow-small);
+  border:1px solid rgba(0,0,0,.04);
+}
+.level h3{
+  font-size:20px;
+  margin-bottom:10px;
+}
+.level li{
+  margin-bottom:10px;
+  line-height:1.38;
+}
+.exchangebar{
+  border-radius:18px;
+  padding:14px 16px;
+  line-height:1.4;
+  box-shadow:var(--soft-shadow-small);
+}
+.gamebox{
+  gap:14px;
+}
+.materials{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#f7f3e9;
+  border-top:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);
+}
+.mat-icon{
+  font-size:24px;
+}
+.teacher{
+  border-radius:16px;
+  background:#fffaf0;
+  box-shadow:0 2px 8px rgba(0,0,0,.03);
+}
+.timerbox{
+  border-radius:18px;
+}
+.navrow{
+  margin-top:16px;
+}
+.navrow button{
+  border-radius:16px;
+  min-height:48px;
+  font-size:15px;
+  font-weight:850;
+}
+.footerline{
+  opacity:.75;
+}
+/* sanfte visuelle Trennung der drei Übungsniveaus */
+.tasks .level:nth-child(1){border-top:6px solid #a9cea2}
+.tasks .level:nth-child(2){border-top:6px solid #a9c9e6}
+.tasks .level:nth-child(3){border-top:6px solid #efc76e}
+/* Exit besonders ruhig und fokussiert */
+.panel .level[style*="var(--green)"]{
+  box-shadow:none;
+  border:2px solid rgba(0,0,0,.05);
+}
+/* größere Darstellung im Vollbild */
+.fullscreen .panel{
+  max-width:1320px;
+  margin:0 auto;
+  padding:28px;
+}
+.fullscreen .task-content{
+  font-size:32px;
+}
+.fullscreen .level li,
+.fullscreen .say{
+  font-size:21px;
+}
+/* Tabletfreundlich */
+@media(max-width:950px){
+  .main{padding:16px}
+  .panel{padding:18px}
+  .titlebox{padding:17px}
+  .tasks{grid-template-columns:1fr}
+  .gamebox{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .phasebar{overflow-x:auto;justify-content:flex-start}
+  .phase{flex:0 0 auto}
+  .blitzgrid,.sequence{grid-template-columns:1fr}
+  .task-content{font-size:22px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">MATHE-ÜBUNGSBAND <small>Klasse 2 · 39 Wochen · 40 Minuten<br>verstehens- und kommunikationsorientiert</small></div>
+    <div id="weeklist"></div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="title" id="topTitle">Mathe-Übungsband</div>
+      <button class="btn" onclick="toggleTeacher()">Lehrerhinweise</button>
+      <button class="btn" onclick="toggleFullscreen()">Vollbild</button>
+      <button class="btn primary" onclick="nextPhase()">Weiter →</button>
+    </div>
+    <div class="content"><div class="card" id="card"></div></div>
+  </main>
+</div>
+<script>
+const weeks = [{"week": 1, "title": "Sicher bis 20", "goal": "Ich kann Zahlen zerlegen und Plus- und Minusaufgaben bis 20 sicher lösen.", "blitz": ["5 = __ + __", "7 = __ + __", "8 + 2 = __", "9 − 3 = __", "10 − __ = 6"], "strategy": {"name": "Erst zur 10", "example": "8 + 5 → 8 + 2 + 3 = 13", "say": "Ich ergänze zuerst bis 10 und rechne dann den Rest weiter."}, "practice": {"basis": ["Lege 7 + 5 mit Plättchen.", "Lege 13 − 6.", "Finde zwei Zerlegungen der 10."], "standard": ["8 + 6", "15 − 7", "9 + 4", "14 − 8", "7 + 5", "16 − 9"], "plus": ["Finde vier verschiedene Aufgaben mit Ergebnis 12.", "Erkläre deinem Partner einen Rechenweg."]}, "game": {"title": "Zahlen-Blitz", "steps": ["Ein Kind zeigt eine Zahl von 5 bis 10.", "Das andere nennt zwei Zerlegungen.", "Dann nennt es eine passende Plus- oder Minusaufgabe.", "Nach drei Runden wechseln."]}, "exit": ["Zerlege 10 auf zwei Arten.", "Rechne: 8 + 7 = __", "Rechne: 15 − 6 = __"], "materials": ["Plättchen oder Wendeplättchen", "Zehnerfeld", "kleine Zahlenkarten 5–10"], "blitz_plus": ["Finde 3 Aufgaben mit Ergebnis 15.", "__ + 8 = 17", "Erfinde eine Plus- und Minusaufgabe mit denselben 3 Zahlen."]}, {"week": 2, "title": "Verdoppeln und Fast-Verdoppeln", "goal": "Ich nutze Verdopplungsaufgaben als Hilfe.", "blitz": ["2 + 2", "3 + 3", "4 + 4", "5 + 5", "Hälfte von 12"], "strategy": {"name": "Fast verdoppelt", "example": "6 + 7 → 6 + 6 + 1", "say": "Ich nutze eine bekannte Doppelaufgabe und verändere nur noch um 1."}, "practice": {"basis": ["Lege 3 + 3, 4 + 4, 5 + 5.", "Lege 5 + 6 und zeige, welche Doppelaufgabe hilft."], "standard": ["6 + 7", "7 + 8", "8 + 9", "5 + 6", "4 + 5", "9 + 8"], "plus": ["Erkläre zwei verschiedene Hilfen für 8 + 9.", "Finde drei Aufgaben, bei denen Verdoppeln hilft."]}, "game": {"title": "Doppel-Memory", "steps": ["Mischt Ergebnis- und Aufgabenkarten.", "Findet Paare wie 4 + 4 ↔ 8.", "Bei Fast-Verdoppeln muss zusätzlich die Hilfsaufgabe genannt werden."]}, "exit": ["Rechne: 7 + 7 = __", "Rechne: 8 + 9 = __", "Welche Doppelaufgabe hilft bei 8 + 9?"], "materials": ["Plättchen", "Doppel-Memorykarten"], "blitz_plus": ["9 + 10 – welche Doppelaufgabe hilft?", "Finde 3 Fast-Doppel-Aufgaben über 10.", "Warum ist 8+9 nur 1 mehr als 8+8?"]}, {"week": 3, "title": "Tausch- und Umkehraufgaben", "goal": "Ich erkenne Aufgabenfamilien.", "blitz": ["3 + 6", "6 + 3", "9 − 3", "9 − 6", "5 + 4"], "strategy": {"name": "Aufgabenfamilie", "example": "6 + 8 = 14 · 8 + 6 = 14 · 14 − 6 = 8 · 14 − 8 = 6", "say": "Zu drei Zahlen gehören oft vier verwandte Aufgaben."}, "practice": {"basis": ["Lege die Zahlen 5, 7 und 12.", "Bilde die vier passenden Aufgaben."], "standard": ["Bilde je vier Aufgaben zu 6, 9, 15.", "Bilde je vier Aufgaben zu 8, 7, 15."], "plus": ["Erfinde eine falsche Aufgabenfamilie.", "Tauscht und verbessert gegenseitig."]}, "game": {"title": "Zahlendreieck", "steps": ["Zieht drei passende Zahlen.", "Legt daraus eine Aufgabenfamilie.", "Partner kontrolliert mit Umkehraufgabe."]}, "exit": ["Rechne: 6 + 8 = __", "Rechne: 14 − 6 = __", "Nenne die Tauschaufgabe zu 6 + 8."], "materials": ["Zahlenkarten", "Aufgabenfamilien-Dreiecke"], "blitz_plus": ["Aufgabenfamilie zu 9,8,17.", "Finde selbst 3 passende Zahlen.", "Welche passt nicht: 7+6, 6+7, 13−7, 13−5?"]}, {"week": 4, "title": "Kleine und große Aufgaben", "goal": "Ich nutze eine kleine Aufgabe als Hilfe für eine große.", "blitz": ["5 − 3", "15 − 3", "4 + 2", "14 + 2", "7 + 1"], "strategy": {"name": "Klein hilft groß", "example": "5 − 3 = 2 → 15 − 3 = 12", "say": "Die Eineraufgabe kenne ich schon. Der Zehner bleibt erhalten."}, "practice": {"basis": ["Ordne kleine und große Aufgaben als Paare.", "Sprich die Gemeinsamkeit laut aus."], "standard": ["6 + 3 → 16 + 3", "8 − 5 → 18 − 5", "4 + 4 → 14 + 4", "7 − 2 → 17 − 2"], "plus": ["Erfinde fünf passende Aufgabenpaare.", "Erkläre, wann diese Hilfe nicht mehr direkt reicht."]}, "game": {"title": "Karten-Match", "steps": ["Aufgabenkarten offen auslegen.", "Finde das passende kleine/große Paar.", "Punkt nur mit Begründung."]}, "exit": ["Rechne: 5 − 3 = __", "Rechne damit: 15 − 3 = __", "Welche kleine Aufgabe hilft bei 24 + 3?"], "materials": ["Aufgabenkarten klein/groß"], "blitz_plus": ["25−3: Welche kleine Aufgabe hilft?", "17+2: Welche kleine Aufgabe hilft?", "Erfinde 3 kleine/große Aufgabenpaare."]}, {"week": 5, "title": "Plus über den Zehner", "goal": "Ich zerlege passend und gehe zuerst bis zum Zehner.", "blitz": ["6 + __ = 10", "7 + __ = 10", "8 + __ = 10", "9 + __ = 10", "5 + __ = 10"], "strategy": {"name": "Herzstrategie Plus", "example": "8 + 5 → 8 + 2 + 3 = 13", "say": "Ich zerlege die zweite Zahl so, dass ich zuerst genau bis 10 komme."}, "practice": {"basis": ["Nutze das Zehnerfeld: 8 + 5, 7 + 6.", "Markiere zuerst den Weg zur 10."], "standard": ["9 + 5", "8 + 6", "7 + 5", "6 + 7", "8 + 4", "9 + 3"], "plus": ["Schreibe zu jeder Aufgabe den Zwischenschritt.", "Erkläre, warum 8 + 5 = 8 + 2 + 3 sinnvoll ist."]}, "game": {"title": "Herz-Karten", "steps": ["Ordne Aufgabe und passenden Zwischenschritt.", "Beispiel: 8 + 5 ↔ 8 + 2 + 3.", "Partner kontrolliert."]}, "exit": ["Rechne: 8 + 7 = __", "Ergänze den Zwischenschritt: 8 + __ = 10", "Rechne: 9 + 6 = __"], "materials": ["Zehnerfeld", "Plättchen", "Herzstrategie-Karten"], "blitz_plus": ["9+8: Zerlege passend.", "7+9: Finde 2 Wege.", "Was ergänzt du bei 6+8 zuerst bis 10?"]}, {"week": 6, "title": "Minus über den Zehner", "goal": "Ich gehe zuerst zurück zum Zehner.", "blitz": ["12 − 2", "15 − 5", "17 − 7", "14 − 4", "18 − 8"], "strategy": {"name": "Herzstrategie Minus", "example": "17 − 9 → 17 − 7 − 2 = 8", "say": "Ich zerlege die zweite Zahl so, dass ich zuerst genau zum Zehner zurückgehe."}, "practice": {"basis": ["Nutze einen Rechenstrich: 15 − 7, 13 − 5.", "Markiere zuerst den Sprung bis 10."], "standard": ["16 − 8", "14 − 6", "18 − 9", "12 − 7", "17 − 8", "15 − 9"], "plus": ["Löse eine Aufgabe zusätzlich durch Ergänzen.", "Vergleiche die beiden Wege."]}, "game": {"title": "Fehlerdetektiv", "steps": ["Prüfe: 16 − 8 = 16 − 6 − 2.", "Entscheide richtig/falsch.", "Begründe mit dem Weg zum Zehner."]}, "exit": ["Rechne: 15 − 7 = __", "Ergänze: 15 − __ = 10", "Rechne: 14 − 8 = __"], "materials": ["Rechenstrich", "Plättchen"], "blitz_plus": ["18−9: Zerlege passend.", "16−7: Finde 2 Wege.", "Warum hilft der Zehner bei 14−8?"]}, {"week": 7, "title": "Zahlen bis 100 darstellen", "goal": "Ich erkenne Zehner und Einer.", "blitz": ["3 Z 4 E = ?", "52 = __ Z __ E", "7 Z = ?", "40 + 6 = ?", "6 Z 2 E = ?"], "strategy": {"name": "Stellenwert", "example": "46 = 4 Zehner + 6 Einer = 40 + 6", "say": "Die Zehner sagen, wie viele Zehnerbündel da sind. Die Einer kommen dazu."}, "practice": {"basis": ["Lege 34, 52 und 68 mit Zehnern und Einern.", "Sprich jede Zahl als Z und E."], "standard": ["47 = __ Z __ E", "73 = __ + __", "90 = __ Z __ E", "58 = __ + __"], "plus": ["Zeige 68 auf drei verschiedene Arten.", "Erfinde eine falsche Darstellung und erkläre den Fehler."]}, "game": {"title": "Zahlendiktat", "steps": ["Partner sagt: „5 Zehner, 7 Einer“.", "Du legst oder schreibst 57.", "Nach fünf Zahlen wechseln."]}, "exit": ["Schreibe als Zahl: 6 Zehner und 4 Einer.", "Zerlege 73 in Zehner und Einer.", "Welche Zahl ist 1 Zehner größer als 48?"], "materials": ["Zehnerstangen/Einerwürfel", "Stellenwerttafel", "Zahlenkarten"], "blitz_plus": ["8Z12E = ?", "Zerlege 74 auf 2 Arten.", "Was ist falsch an 63 = 5Z + 13E?"]}, {"week": 8, "title": "Zahlen ordnen und vergleichen", "goal": "Ich vergleiche Zahlen sicher.", "blitz": ["Vorgänger von 39", "Nachfolger von 50", "47 __ 74", "63 __ 36", "Nachbarzehner von 71"], "strategy": {"name": "Erst Zehner, dann Einer", "example": "58 < 85", "say": "Ich vergleiche zuerst die Zehner. Nur wenn sie gleich sind, schaue ich auf die Einer."}, "practice": {"basis": ["Ordne 34, 43, 29, 52.", "Setze < oder > zwischen Nachbarzahlen."], "standard": ["Vergleiche 8 Zahlenpaare.", "Ordne 61, 16, 66, 60, 19, 91."], "plus": ["Finde fünf Zahlen, die größer als 46 und kleiner als 60 sind.", "Mindestens zwei sollen die Einer 3 oder 7 haben."]}, "game": {"title": "Zahlen-Duell", "steps": ["Zieht zwei Ziffernkarten.", "Baut die größte mögliche Zahl.", "Wer die größere Zahl hat, bekommt einen Punkt."]}, "exit": ["Setze ein: 47 __ 74", "Nenne Vorgänger und Nachfolger von 60.", "Welche Zahl liegt zwischen 58 und 60?"], "materials": ["Ziffernkarten 0–9", "Zahlenstrahl bis 100"], "blitz_plus": ["Finde alle Zahlen zwischen 47 und 53.", "Welche liegt näher an 70: 66 oder 74?", "Größte zweistellige Zahl aus 3,7,0?"]}, {"week": 9, "title": "Zahlenstrahl bis 100", "goal": "Ich orientiere mich auf dem Zahlenstrahl.", "blitz": ["34 + 10", "61 − 10", "78 + 1", "50 − 1", "65 + 10"], "strategy": {"name": "Sprünge sehen", "example": "43 → +20 → 63 → +5 → 68", "say": "Große Sprünge mache ich zuerst. Dann ergänze ich die kleinen."}, "practice": {"basis": ["Trage 20, 40, 60, 80 ein.", "Markiere 36, 58 und 71."], "standard": ["Bestimme Abstände zwischen 34 und 50, 58 und 70, 71 und 90."], "plus": ["Finde zwei verschiedene Sprungwege von 47 zu 73.", "Welcher ist übersichtlicher?"]}, "game": {"title": "Wo liegt meine Zahl?", "steps": ["Denke dir eine Zahl.", "Gib Hinweise: zwischen…, näher an…, größer als….", "Partner rät."]}, "exit": ["Welche Zahl liegt auf halbem Weg zwischen 40 und 50?", "Wie groß ist der Abstand von 63 zu 70?", "Ordne: 28, 82, 38"], "materials": ["großer Zahlenstrahl", "kleine Zahlenstrahlen"], "blitz_plus": ["Von 38 zu 72: 2 Sprungwege.", "Mitte zwischen 40 und 60?", "Abstand von 27 bis 83?"]}, {"week": 10, "title": "Zehner addieren", "goal": "Ich addiere ganze Zehner sicher.", "blitz": ["20 + 30", "40 + 10", "35 + 10", "47 + 20", "61 + 30"], "strategy": {"name": "Zehner verändern", "example": "34 + 20 → 3 Z + 2 Z = 5 Z → 54", "say": "Die Einer bleiben gleich. Nur die Zehner verändern sich."}, "practice": {"basis": ["Lege 34 + 20 mit Zehnerstangen.", "Lege 42 + 30."], "standard": ["43 + 20", "56 + 30", "72 + 10", "35 + 40", "24 + 50", "61 + 20"], "plus": ["Baue eine Rechenkette mit +10, +20, +30.", "Erkläre, warum die Einer gleich bleiben."]}, "game": {"title": "Rechenweg zum Ziel", "steps": ["Start bei 24.", "+20, +10, −20.", "Partner nennt das Ergebnis nach jedem Schritt."]}, "exit": ["Rechne: 34 + 20 = __", "Rechne: 57 + 30 = __", "Was bleibt bei +20 gleich? Einer oder Zehner?"], "materials": ["Zehnerstangen", "Stellenwerttafel"], "blitz_plus": ["47+40", "36+__=76", "Erfinde +30 mit Ergebnis 85."]}, {"week": 11, "title": "Zehner subtrahieren", "goal": "Ich subtrahiere ganze Zehner sicher.", "blitz": ["70 − 20", "56 − 10", "84 − 30", "93 − 20", "65 − 40"], "strategy": {"name": "Zehner wegnehmen", "example": "67 − 30 → 6 Z − 3 Z = 3 Z → 37", "say": "Die Einer bleiben gleich. Ich nehme nur Zehner weg."}, "practice": {"basis": ["Lege 67 − 30.", "Lege 52 − 20."], "standard": ["76 − 20", "91 − 40", "68 − 30", "55 − 20", "84 − 50", "73 − 10"], "plus": ["Ergänze: 72 − __ = 42.", "Erfinde drei ähnliche Lückenaufgaben."]}, "game": {"title": "Plus-Minus-Paare", "steps": ["Ordne 42 + 30 und 72 − 30 zusammen.", "Erkläre, wie die Aufgaben zusammenhängen."]}, "exit": ["Rechne: 76 − 20 = __", "Rechne: 91 − 40 = __", "Was bleibt bei −30 gleich? Einer oder Zehner?"], "materials": ["Zehnerstangen", "Aufgabenpaare"], "blitz_plus": ["83−40", "92−__=52", "Erfinde −30 mit Ergebnis 47."]}, {"week": 12, "title": "Einer ohne Zehnerübergang", "goal": "Ich rechne Einer dazu oder weg, ohne den Zehner zu überschreiten.", "blitz": ["32 + 5", "47 + 2", "58 − 6", "69 − 4", "41 + 7"], "strategy": {"name": "Einer verändern", "example": "43 + 5 = 48", "say": "Der Zehner bleibt gleich, solange ich die Zehnergrenze nicht überschreite."}, "practice": {"basis": ["Rechne mit Material: 32 + 4, 46 − 3.", "Zeige, warum der Zehner gleich bleibt."], "standard": ["43 + 5", "68 − 7", "51 + 6", "79 − 4", "24 + 3", "96 − 5"], "plus": ["Sortiere Aufgaben: mit Übergang / ohne Übergang.", "Erkläre zwei Entscheidungen."]}, "game": {"title": "Aufgaben-Sortierung", "steps": ["Zieht eine Aufgabe.", "Legt sie zu „mit Übergang“ oder „ohne Übergang“.", "Partner begründet."]}, "exit": ["Rechne: 43 + 5 = __", "Rechne: 68 − 6 = __", "Hat 54 + 3 einen Zehnerübergang?"], "materials": ["Aufgabenkarten", "Stellenwertmaterial"], "blitz_plus": ["58+7: Übergang?", "72−5: Übergang?", "Erfinde je 2 mit/ohne Übergang."]}, {"week": 13, "title": "Plus über den Zehner bis 100", "goal": "Ich übertrage die Herzstrategie auf größere Zahlen.", "blitz": ["8 + 5", "38 + 5", "7 + 6", "47 + 6", "9 + 4"], "strategy": {"name": "Bis zum nächsten Zehner", "example": "38 + 7 → +2 = 40 → +5 = 45", "say": "Die kleine Aufgabe hilft mir bei der großen."}, "practice": {"basis": ["Mit Material: 28 + 5, 36 + 7.", "Markiere den nächsten Zehner."], "standard": ["46 + 7", "58 + 5", "67 + 6", "79 + 4", "35 + 8", "48 + 6"], "plus": ["Vergleiche zwei Rechenwege zu 48 + 7.", "Welcher ist für dich übersichtlicher?"]}, "game": {"title": "Klein ↔ groß", "steps": ["Ordne 8 + 7 zu 48 + 7.", "Nenne zuerst die kleine Aufgabe, dann die große."]}, "exit": ["Rechne: 38 + 7 = __", "Ergänze: 38 + __ = 40", "Wie geht es nach 40 weiter?"], "materials": ["Rechenstrich", "Zehnerfeld", "Aufgabenkarten klein/groß"], "blitz_plus": ["68+7: Zwischenschritt.", "59+8: 2 Wege.", "Warum hilft 9+8 bei 59+8?"]}, {"week": 14, "title": "Plus über den Zehner festigen", "goal": "Ich zerlege passend und rechne sicher.", "blitz": ["46 + __ = 50", "58 + __ = 60", "73 + __ = 80", "39 + __ = 40", "67 + __ = 70"], "strategy": {"name": "Passend zerlegen", "example": "57 + 8 → +3 = 60 → +5 = 65", "say": "Ich brauche zuerst genau so viel, bis der nächste Zehner voll ist."}, "practice": {"basis": ["Rechne mit markierter Zehnergrenze: 48 + 7, 69 + 5."], "standard": ["76 + 8", "35 + 9", "58 + 6", "47 + 8", "29 + 7", "64 + 9"], "plus": ["Finde vier verschiedene Übergangsaufgaben mit Ergebnis 75.", "Notiere passende Zwischenschritte."]}, "game": {"title": "Rechenweg-Domino", "steps": ["Ordne Aufgabe → Zwischenschritt → Ergebnis.", "Beispiel: 57 + 8 → 57 + 3 + 5 → 65."]}, "exit": ["Rechne: 56 + 8 = __", "Rechne: 67 + 9 = __", "Welche Hilfsaufgabe nutzt du bei 59 + 7?"], "materials": ["Domino-Karten", "Rechenstrich"], "blitz_plus": ["67+9", "3 Übergangsaufgaben mit Ergebnis 84.", "58+6 oder 58+2: Was ist leichter? Warum?"]}, {"week": 15, "title": "Minus über den Zehner bis 100", "goal": "Ich gehe schrittweise zum vorherigen Zehner zurück.", "blitz": ["15 − 7", "45 − 7", "13 − 5", "63 − 5", "18 − 9"], "strategy": {"name": "Zurück zum Zehner", "example": "65 − 7 → −5 = 60 → −2 = 58", "say": "Ich nehme zuerst so viel weg, bis ich beim Zehner bin."}, "practice": {"basis": ["Mit Rechenstrich: 42 − 5, 53 − 6."], "standard": ["52 − 6", "71 − 4", "64 − 8", "83 − 7", "91 − 6", "74 − 9"], "plus": ["Löse eine Aufgabe auch durch Ergänzen.", "Vergleiche die Wege."]}, "game": {"title": "Fehlerdetektiv", "steps": ["Prüfe: 72 − 5 = 72 − 2 − 3.", "Ist der Weg richtig?", "Begründe."]}, "exit": ["Rechne: 52 − 7 = __", "Ergänze: 52 − __ = 50", "Rechne weiter bis zum Ergebnis."], "materials": ["Rechenstrich", "Fehlerkarten"], "blitz_plus": ["82−7: Zwischenschritt.", "71−6: 2 Wege.", "Warum hilft 12−7 bei 72−7?"]}, {"week": 16, "title": "Minus über den Zehner festigen", "goal": "Ich zerlege sicher und erkläre meinen Weg.", "blitz": ["54 − 4", "72 − 2", "86 − 6", "63 − 3", "91 − 1"], "strategy": {"name": "Rest bestimmen", "example": "83 − 7 → −3 = 80 → −4 = 76", "say": "Ich überlege zuerst: Wie viel bis zum Zehner? Dann nehme ich den Rest weg."}, "practice": {"basis": ["Rechne mit Hilfslinie: 73 − 6, 62 − 5."], "standard": ["91 − 7", "44 − 8", "82 − 5", "70 − 6", "53 − 9", "61 − 4"], "plus": ["Erfinde eine Aufgabe mit: −4 bis zum Zehner, dann −3.", "Tauscht und löst."]}, "game": {"title": "Erklär-Partner", "steps": ["Kind A rechnet.", "Kind A erklärt jeden Schritt.", "Kind B prüft und stellt eine Rückfrage.", "Dann wechseln."]}, "exit": ["Rechne: 64 − 9 = __", "Rechne: 71 − 6 = __", "Wie zerlegst du 9 bei 64 − 9?"], "materials": ["Rechenstrich", "Partner-Satzstarter"], "blitz_plus": ["90−7", "64−9: 2 Wege.", "Erfinde: −3 bis Zehner, dann −4."]}, {"week": 17, "title": "Zweistellig plus zweistellig", "goal": "Ich zerlege den zweiten Summanden in Zehner und Einer.", "blitz": ["34 + 20", "54 + 3", "27 + 10", "27 + 2", "46 + 30"], "strategy": {"name": "Zehner zuerst, Einer danach", "example": "34 + 23 → +20 = 54 → +3 = 57", "say": "Ich zerlege 23 in 20 und 3."}, "practice": {"basis": ["Mit Stellenwertmaterial: 32 + 24, 41 + 16."], "standard": ["42 + 25", "36 + 13", "51 + 28", "47 + 22", "63 + 14", "25 + 32"], "plus": ["Rechne 48 + 24 auf zwei Wegen.", "Vergleiche die Reihenfolge der Schritte."]}, "game": {"title": "Rechenweg-Puzzle", "steps": ["Ordne die Rechenschritte in die richtige Reihenfolge.", "Lies den fertigen Rechenweg laut vor."]}, "exit": ["Rechne: 34 + 25 = __", "Rechne: 46 + 32 = __", "Welche Zahl zerlegst du zuerst in Zehner und Einer?"], "materials": ["Stellenwertmaterial", "Rechenweg-Puzzlekarten"], "blitz_plus": ["48+27", "39+24: 2 Wege.", "52+19 oder 52+20: Was hilft?"]}, {"week": 18, "title": "Zweistellig minus zweistellig", "goal": "Ich zerlege den Subtrahenden und rechne schrittweise.", "blitz": ["76 − 20", "56 − 3", "68 − 10", "68 − 5", "84 − 30"], "strategy": {"name": "Schrittweise minus", "example": "65 − 17 → −10 = 55 → −5 = 50 → −2 = 48", "say": "Ich zerlege so, dass ich übersichtliche Schritte bekomme."}, "practice": {"basis": ["Mit Material: 74 − 21, 63 − 14."], "standard": ["82 − 26", "56 − 18", "71 − 23", "95 − 32", "64 − 15", "88 − 24"], "plus": ["Kontrolliere zwei Aufgaben mit der Umkehraufgabe.", "Erkläre, warum die Kontrolle funktioniert."]}, "game": {"title": "Rechenkette + Kontrolle", "steps": ["Rechne die Aufgabe.", "Bilde danach die passende Plusaufgabe.", "Stimmen Start- und Zielzahl zusammen?"]}, "exit": ["Rechne: 73 − 21 = __", "Rechne: 86 − 34 = __", "Welche Zahl zerlegst du bei 86 − 34?"], "materials": ["Stellenwertmaterial", "Umkehraufgaben-Karten"], "blitz_plus": ["73−28", "81−19: 2 Wege.", "64−20 oder 64−19: Was hilft?"]}, {"week": 19, "title": "Strategien auswählen", "goal": "Ich wähle einen passenden Rechenweg.", "blitz": ["49 + 20", "49 + 1", "50 − 19", "38 + 7", "62 − 9"], "strategy": {"name": "Schlau wählen", "example": "39 + 21 → +20 +1 · 62 − 9 → −10 +1", "say": "Nicht jede Aufgabe braucht denselben Rechenweg."}, "practice": {"basis": ["Ordne Aufgaben passenden Strategiekarten zu."], "standard": ["Rechne 10 gemischte Aufgaben.", "Schreibe hinter jede Aufgabe die Strategie."], "plus": ["Begründe bei drei Aufgaben, warum dein Weg besonders günstig ist."]}, "game": {"title": "Strategie-Duell", "steps": ["Beide sehen dieselbe Aufgabe.", "Jeder nennt einen Rechenweg.", "Gemeinsam entscheidet ihr: kurz, sicher, verständlich?"]}, "exit": ["Rechne geschickt: 39 + 21 = __", "Rechne geschickt: 72 − 19 = __", "Nenne die Strategie, die du bei einer Aufgabe benutzt hast."], "materials": ["Strategiekarten"], "blitz_plus": ["48+19: Strategie wählen.", "71−29: Strategie wählen.", "Warum ist 39+21 günstig?"]}, {"week": 20, "title": "Rechenkonferenz", "goal": "Ich erkläre und vergleiche Rechenwege.", "blitz": ["46 + 7", "63 − 8", "35 + 20", "72 − 30", "54 + 16"], "strategy": {"name": "Wege vergleichen", "example": "46 + 27 → Weg A: +20, +7 · Weg B: +30, −3", "say": "Ein Rechenweg ist gut, wenn er richtig, verständlich und für mich passend ist."}, "practice": {"basis": ["Lege einen vorgegebenen Rechenweg nach."], "standard": ["Notiere deinen eigenen Weg zu 58 + 16 und 72 − 18."], "plus": ["Verbessere einen umständlichen oder falschen Weg.", "Begründe deine Änderung."]}, "game": {"title": "Mini-Rechenkonferenz", "steps": ["Kind A erklärt.", "Kind B sagt: „Ich verstehe…“ und stellt eine Frage.", "Dann Weg B vergleichen."]}, "exit": ["Rechne: 47 + 28 = __", "Zeige einen zweiten möglichen Rechenweg.", "Welcher Weg war für dich geschickter?"], "materials": ["Satzstarter-Karten", "Rechenweg-Beispiele"], "blitz_plus": ["2 Wege für 67+28.", "Geschickter Weg für 72−19.", "Wann ist eine Hilfsaufgabe besser?"]}, {"week": 21, "title": "Malnehmen verstehen", "goal": "Ich erkenne gleich große Gruppen als Malaufgabe.", "blitz": ["2 + 2 + 2", "5 + 5", "10 + 10", "doppelt 4", "3 + 3 + 3"], "strategy": {"name": "Gleich große Gruppen", "example": "3 Gruppen mit je 4 → 4 + 4 + 4 = 3 · 4 = 12", "say": "Beim Malnehmen sind alle Gruppen gleich groß."}, "practice": {"basis": ["Lege 3 Gruppen mit je 4.", "Lege 2 Gruppen mit je 5."], "standard": ["Verbinde Bild, Plusaufgabe und Malaufgabe.", "Schreibe zu 4 Bildern die Malaufgabe."], "plus": ["Finde verschiedene Malbilder für 12.", "Erkläre die Unterschiede."]}, "game": {"title": "Malbild-Diktat", "steps": ["Kind A beschreibt ein Malbild.", "Kind B legt es ohne Vorlage.", "Dann Malaufgabe nennen und wechseln."]}, "exit": ["Schreibe als Malaufgabe: 4 + 4 + 4", "Rechne: 3 · 5 = __", "Zeichne oder beschreibe 2 · 4 als Gruppen."], "materials": ["Plättchen", "Punktefelder"], "blitz_plus": ["Zeige 4·3 auf 2 Arten.", "3 Malaufgaben mit Ergebnis 12.", "Welche Plusaufgabe gehört zu 5·4?"]}, {"week": 22, "title": "2er-, 5er- und 10er-Reihe", "goal": "Ich automatisiere wichtige Kernreihen.", "blitz": ["2 · 3", "5 · 4", "10 · 6", "2 · 7", "5 · 5"], "strategy": {"name": "Muster nutzen", "example": "2er = verdoppeln · 5er = 5er-Schritte · 10er = Zehnersprünge", "say": "Ich nutze die Struktur der Reihe, statt jede Aufgabe neu zu zählen."}, "practice": {"basis": ["Lege 2er-, 5er- und 10er-Aufgaben im Punktefeld."], "standard": ["Rechne 15 gemischte Aufgaben aus 2er, 5er und 10er."], "plus": ["Löse Lücken: __ · 5 = 30, 2 · __ = 16, 10 · __ = 70."]}, "game": {"title": "Reihen-Bingo", "steps": ["Wähle 9 Ergebnisse.", "Partner nennt Aufgaben.", "Streiche das passende Ergebnis."]}, "exit": ["Rechne: 2 · 8 = __", "Rechne: 5 · 7 = __", "Rechne: 10 · 6 = __"], "materials": ["Punktefelder", "Bingo-Feld"], "blitz_plus": ["__·5=45", "2·__=18", "Welche 10er-Aufgabe hilft bei 9·10?"]}, {"week": 23, "title": "Tauschaufgaben beim Malnehmen", "goal": "Ich nutze Tauschaufgaben als Hilfe.", "blitz": ["3 · 4", "4 · 3", "2 · 7", "7 · 2", "5 · 6"], "strategy": {"name": "Punktefeld drehen", "example": "3 · 6 = 6 · 3", "say": "Ich kann Reihen und Spalten tauschen. Die Anzahl bleibt gleich."}, "practice": {"basis": ["Lege 3 · 4 und drehe das Punktefeld."], "standard": ["Schreibe acht Tauschpaare.", "Markiere bekannte Aufgaben."], "plus": ["Erkläre, warum Tauschaufgaben das Einmaleins leichter machen."]}, "game": {"title": "Tausch-Memory", "steps": ["Finde Paare wie 3 · 6 ↔ 6 · 3.", "Punkt nur, wenn beide Ergebnisse genannt werden."]}, "exit": ["Rechne: 3 · 7 = __", "Nenne die Tauschaufgabe.", "Rechne die Tauschaufgabe."], "materials": ["Punktefelder", "Memorykarten"], "blitz_plus": ["7·4 und 4·7", "3 Tauschpaare mit Ergebnis 24.", "Warum bleibt das Ergebnis gleich?"]}, {"week": 24, "title": "4er-Reihe aus Verdoppeln", "goal": "Ich leite neue Malaufgaben aus bekannten ab.", "blitz": ["2 · 4", "2 · 6", "2 · 8", "doppelt 12", "doppelt 16"], "strategy": {"name": "Noch einmal verdoppeln", "example": "4 · 6 → 2 · 6 = 12 → doppelt = 24", "say": "Die 4er-Reihe ist die doppelte 2er-Reihe."}, "practice": {"basis": ["Halbiere Punktefelder der 4er-Reihe und finde die 2er-Aufgabe."], "standard": ["Leite alle Aufgaben der 4er-Reihe aus der 2er-Reihe ab."], "plus": ["Welche 8er-Aufgaben kannst du auf ähnliche Weise finden?"]}, "game": {"title": "Ableitungs-Karten", "steps": ["Ziehe z. B. 2 · 7.", "Nenne die passende 4er-Aufgabe.", "Erkläre den Verdopplungsschritt."]}, "exit": ["Rechne: 4 · 6 = __", "Welche 2er-Aufgabe hilft?", "Rechne: 4 · 8 = __"], "materials": ["Punktefelder", "Ableitungskarten"], "blitz_plus": ["4·7 aus 2·7.", "8·6 aus 4·6.", "Welche Aufgabe hilft bei 4·9?"]}, {"week": 25, "title": "Nachbaraufgaben im Einmaleins", "goal": "Ich nutze bekannte Kernaufgaben als Hilfe.", "blitz": ["5 · 6", "6 · 6", "10 · 4", "9 · 4", "5 · 7"], "strategy": {"name": "Eine Gruppe mehr oder weniger", "example": "6 · 4 → 5 · 4 = 20 → +4 = 24", "say": "Ich starte bei einer bekannten Aufgabe und verändere nur eine Gruppe."}, "practice": {"basis": ["Ergänze im Punktefeld aus 5 · 4 die Aufgabe 6 · 4."], "standard": ["Leite 6er-Aufgaben aus 5er-Aufgaben ab.", "Leite 9er-Aufgaben aus 10er-Aufgaben ab."], "plus": ["Finde zwei verschiedene Hilfen für 7 · 4."]}, "game": {"title": "Hilfsaufgabe gesucht", "steps": ["Ziehe eine Malaufgabe.", "Nenne eine passende bekannte Hilfsaufgabe.", "Erkläre den Unterschied."]}, "exit": ["Rechne: 6 · 5 = __", "Leite daraus 7 · 5 ab.", "Welche Kernaufgabe hilft bei 9 · 4?"], "materials": ["Punktefelder", "Hilfsaufgabenkarten"], "blitz_plus": ["7·5 aus 6·5.", "9·6 aus 10·6.", "2 Hilfsaufgaben für 7·4."]}, {"week": 26, "title": "Einmaleins gemischt", "goal": "Ich rechne Einmaleinsaufgaben sicher und mit Hilfen.", "blitz": ["3 · 5", "4 · 6", "7 · 2", "9 · 5", "8 · 4"], "strategy": {"name": "Direkt oder ableiten", "example": "✓ weiß ich direkt · → leite ich aus einer Kernaufgabe ab", "say": "Wenn ich eine Aufgabe nicht sofort weiß, nutze ich eine passende Hilfsaufgabe."}, "practice": {"basis": ["Trainiere Kernaufgaben 2er, 5er, 10er und 4er."], "standard": ["Rechne 15 gemischte Malaufgaben.", "Markiere drei Aufgaben, bei denen du eine Hilfe genutzt hast."], "plus": ["Schreibe zu fünf schwierigen Aufgaben je eine Hilfsaufgabe."]}, "game": {"title": "Einmaleins-Duell", "steps": ["Aufgabe ziehen.", "Punkt nur für Ergebnis + passende Strategie.", "Bei Fehler: Partner erklärt."]}, "exit": ["Rechne: 7 · 8 = __", "Welche Hilfsaufgabe nutzt du?", "Rechne: 9 · 6 = __"], "materials": ["Einmaleinskarten", "Strategiekarten"], "blitz_plus": ["7·8: Welche Hilfe?", "9·7: Welche Kernaufgabe?", "Direkt gewusst oder abgeleitet?"]}, {"week": 27, "title": "Teilen durch Verteilen", "goal": "Ich verstehe Teilen als gerechtes Verteilen.", "blitz": ["12 auf 3 Kinder", "10 auf 2 Kinder", "15 auf 5 Kinder", "8 auf 4 Kinder", "20 auf 5 Kinder"], "strategy": {"name": "Gerecht verteilen", "example": "12 : 3 = 4", "say": "Ich verteile gleichmäßig. Jedes Kind bekommt gleich viel."}, "practice": {"basis": ["Verteile 12 Plättchen auf 3 Gruppen.", "Verteile 15 auf 5 Gruppen."], "standard": ["Ordne Bilder zu Geteiltaufgaben.", "Rechne 18 : 3, 20 : 5, 16 : 4."], "plus": ["Erfinde eine Sachgeschichte zu 12 : 4."]}, "game": {"title": "Verteile meine Zahl", "steps": ["Kind A nennt Zahl und Gruppenanzahl.", "Kind B verteilt mit Plättchen.", "Danach Aufgabe sprechen."]}, "exit": ["Verteile 20 gerecht auf 5 Kinder. Jedes Kind bekommt __.", "Rechne: 18 : 6 = __", "Ist das Verteilen oder Aufteilen?"], "materials": ["Plättchen", "Schälchen oder Kreise"], "blitz_plus": ["24:6", "18 auf 6 Kinder: je __", "Verteilgeschichte zu 20:4."]}, {"week": 28, "title": "Teilen durch Aufteilen", "goal": "Ich erkenne, wie viele Gruppen entstehen.", "blitz": ["Wie oft passt 5 in 20?", "Wie oft passt 2 in 12?", "Wie oft passt 4 in 16?", "Wie oft passt 3 in 18?"], "strategy": {"name": "Gruppen bilden", "example": "18 : 3 → Gruppen zu je 3 → 6 Gruppen", "say": "Ich frage: Wie viele gleich große Gruppen kann ich bilden?"}, "practice": {"basis": ["Bilde aus 12 Plättchen Gruppen zu je 3.", "Bilde aus 20 Gruppen zu je 5."], "standard": ["Unterscheide Aufgaben: verteilen oder aufteilen.", "Rechne 16 : 4, 18 : 6, 20 : 5."], "plus": ["Zeige beide Bedeutungen zu 12 : 3."]}, "game": {"title": "Sortierspiel", "steps": ["Lest eine Sachgeschichte.", "Legt sie zu „verteilen“ oder „aufteilen“.", "Begründet."]}, "exit": ["Wie viele 4er-Gruppen stecken in 20?", "Rechne: 20 : 4 = __", "Ist das Verteilen oder Aufteilen?"], "materials": ["Plättchen", "Sortierkarten"], "blitz_plus": ["24:4 = __ Gruppen", "21:3 = __ Gruppen", "Aufteilgeschichte zu 18:6."]}, {"week": 29, "title": "Mal und Geteilt verbinden", "goal": "Ich nutze Umkehraufgaben.", "blitz": ["4 · 5 = 20 → 20 : 5", "3 · 6 = 18 → 18 : 3", "5 · 7 = 35 → 35 : 5"], "strategy": {"name": "Aufgabenfamilie Mal/Geteilt", "example": "3 · 7 = 21 · 21 : 7 = 3 · 21 : 3 = 7", "say": "Malnehmen und Teilen gehören zusammen."}, "practice": {"basis": ["Lege Aufgabenfamilien mit Dreieckskarten."], "standard": ["Bilde zu vier Malaufgaben die beiden Geteiltaufgaben."], "plus": ["Löse Lückenaufgaben über die Umkehrung."]}, "game": {"title": "Familien-Domino", "steps": ["Lege passende Mal- und Geteiltaufgaben aneinander.", "Sprich die Beziehung laut aus."]}, "exit": ["Rechne: 6 · 4 = __", "Rechne dazu: 24 : 6 = __", "Rechne dazu: 24 : 4 = __"], "materials": ["Aufgabenfamilienkarten", "Domino"], "blitz_plus": ["7·5=35 → 2 Geteiltaufgaben", "__·6=24", "Welche Malaufgabe hilft bei 32:4?"]}, {"week": 30, "title": "Geld", "goal": "Ich rechne mit Euro und Cent.", "blitz": ["100 ct = __ €", "50 ct + 20 ct", "2 € − 50 ct", "1 € + 1 €", "5 € − 2 €"], "strategy": {"name": "Betrag zuerst verstehen", "example": "2 € 50 ct = 250 ct", "say": "Ich schaue zuerst auf Euro und Cent und wähle eine passende Darstellung."}, "practice": {"basis": ["Lege 1 €, 2 €, 2,50 € mit Spielgeld."], "standard": ["Rechne vier Einkäufe und bestimme Rückgeld."], "plus": ["Stelle einen Einkauf mit drei Dingen für höchstens 10 € zusammen."]}, "game": {"title": "Mini-Laden", "steps": ["Ein Kind ist Verkäufer, eins Käufer.", "Preis nennen, bezahlen, Rückgeld prüfen.", "Dann wechseln."]}, "exit": ["Rechne: 3 € + 2,50 € = __", "Rechne: 10 € − 6 € = __", "Nenne eine Möglichkeit, 5 € passend zu bezahlen."], "materials": ["Spielgeld", "Preiskarten"], "blitz_plus": ["3,50€+2€", "10€−3,50€", "2 Möglichkeiten für 4,50€."]}, {"week": 31, "title": "Längen", "goal": "Ich schätze, messe und vergleiche Längen.", "blitz": ["100 cm = __ m", "Bleistift: cm oder m?", "Türhöhe: cm oder m?", "50 cm + 20 cm"], "strategy": {"name": "Schätzen – messen – prüfen", "example": "Schätzung: 25 cm → gemessen: 28 cm", "say": "Ich schätze zuerst. Dann messe ich genau und vergleiche."}, "practice": {"basis": ["Miss fünf Gegenstände im Raum.", "Notiere Schätzung und Messwert."], "standard": ["Vergleiche Längen und rechne einfache Summen/Differenzen."], "plus": ["Finde einen absichtlich falschen Messwert und erkläre den Fehler."]}, "game": {"title": "Schätzmeister", "steps": ["Ein Gegenstand wird gewählt.", "Alle schätzen.", "Dann messen.", "Wer liegt am nächsten?"]}, "exit": ["1 m = __ cm", "Welche Länge ist größer: 85 cm oder 1 m?", "Schätze: Ist ein Tisch eher 1 cm, 1 m oder 10 m lang?"], "materials": ["Lineale", "Maßband"], "blitz_plus": ["1m25cm = __cm", "90cm+35cm", "Was ist ungefähr 1m lang?"]}, {"week": 32, "title": "Zeit", "goal": "Ich lese Uhrzeiten und bestimme einfache Zeitspannen.", "blitz": ["60 min = __ h", "8:00 + 30 min", "10:00 bis 10:30", "7:30 = halb __"], "strategy": {"name": "Uhrzeit sprechen", "example": "8:30 = halb neun", "say": "Ich verbinde digitale Zeit, gesprochene Zeit und die Zeigerstellung."}, "practice": {"basis": ["Stelle volle und halbe Uhrzeiten ein."], "standard": ["Lies und notiere acht Uhrzeiten.", "Bestimme einfache Zeitspannen."], "plus": ["Ordne einen Tagesablauf und ergänze passende Zeitspannen."]}, "game": {"title": "Uhrzeiten-Memory", "steps": ["Finde Paare: analog ↔ digital ↔ Sprache.", "Bei jedem Paar Uhrzeit laut nennen."]}, "exit": ["Wie spät ist es 30 min nach 9:15?", "Wie lange dauert es von 10:00 bis 11:30?", "Ist 14:00 Uhr morgens oder nachmittags?"], "materials": ["Lernuhren", "Uhrzeitkarten"], "blitz_plus": ["9:15 +45min", "8:30 bis 10:00", "Erfinde genau 90 Minuten."]}, {"week": 33, "title": "Geometrische Formen", "goal": "Ich beschreibe Formen über ihre Eigenschaften.", "blitz": ["Kreis", "Dreieck", "Quadrat", "Rechteck", "Welche Form hat 3 Seiten?"], "strategy": {"name": "Eigenschaften nennen", "example": "Quadrat: 4 Seiten, 4 Ecken, alle Seiten gleich lang", "say": "Ich beschreibe erst die Eigenschaften und nenne dann den Namen."}, "practice": {"basis": ["Sortiere Formen nach Seiten/Ecken."], "standard": ["Ordne Eigenschaften den Formen zu."], "plus": ["Baue eine Figur aus Formen und beschreibe sie so, dass Partner sie nachlegen kann."]}, "game": {"title": "Welche Form bin ich?", "steps": ["Eine Form geheim auswählen.", "Partner stellt nur Ja/Nein-Fragen.", "Nach maximal fünf Fragen raten."]}, "exit": ["Wie viele Ecken hat ein Rechteck?", "Nenne eine Eigenschaft des Quadrats.", "Welche Form hat keine Ecken?"], "materials": ["Formenkarten", "Tangram/Legeformen"], "blitz_plus": ["4 Ecken, nicht alle Seiten gleich.", "2 Gemeinsamkeiten Quadrat/Rechteck.", "Beschreibe eine Form eindeutig."]}, {"week": 34, "title": "Symmetrie und Muster", "goal": "Ich erkenne und erzeuge symmetrische Strukturen.", "blitz": ["symmetrisch: ja/nein?", "ABBA → ?", "AAB AAB → ?", "Spiegelachse finden"], "strategy": {"name": "Spiegeln", "example": "Beide Seiten passen beim Falten aufeinander.", "say": "An der Spiegelachse entsteht auf der anderen Seite das passende Gegenstück."}, "practice": {"basis": ["Ergänze einfache Spiegelbilder."], "standard": ["Finde Spiegelachsen in Figuren."], "plus": ["Erfinde ein eigenes symmetrisches Muster und beschreibe die Regel."]}, "game": {"title": "Partner-Spiegel", "steps": ["Kind A legt eine Hälfte.", "Kind B ergänzt spiegelbildlich.", "Gemeinsam prüfen."]}, "exit": ["Ist diese Folge symmetrisch: ABCCBA?", "Setze fort: rot – blau – rot – blau – __", "Nenne eine Eigenschaft eines symmetrischen Musters."], "materials": ["Spiegel", "Legeplättchen", "Rasterpapier"], "blitz_plus": ["Finde 2 Spiegelachsen.", "Setze fort: ABCCBA …", "Symmetrisches Muster mit 6 Plättchen."]}, {"week": 35, "title": "Würfelgebäude", "goal": "Ich stelle mir Gebäude vor und zähle systematisch.", "blitz": ["2 + 2 + 1 Würfel", "3 + 1 + 2 Würfel", "Wie viele Ebenen?"], "strategy": {"name": "Systematisch zählen", "example": "Ebene für Ebene zählen", "say": "Ich zähle so, dass kein Würfel doppelt gezählt oder vergessen wird."}, "practice": {"basis": ["Baue einfache Gebäude nach Vorlage."], "standard": ["Ordne Baupläne und Gebäude zu."], "plus": ["Baue drei verschiedene Gebäude mit genau 8 Würfeln."]}, "game": {"title": "Bau-Diktat", "steps": ["Kind A baut verdeckt.", "Es beschreibt nur mit Worten.", "Kind B baut nach.", "Dann vergleichen."]}, "exit": ["Ein Würfelgebäude hat unten 4 und oben 2 Würfel. Insgesamt __.", "Kann man 6 Würfel auf zwei verschiedene Arten bauen?", "Was verändert eine andere Ansicht: das Gebäude oder nur den Blick?"], "materials": ["Steckwürfel", "Bauplanraster"], "blitz_plus": ["Unten 5, oben 3 Würfel.", "8 Würfel auf 2 Ebenen.", "2 Gebäude mit 6 Würfeln."]}, {"week": 36, "title": "Sachaufgaben", "goal": "Ich verstehe zuerst die Situation und rechne dann.", "blitz": ["Welche Rechenart passt? Plus", "Welche Rechenart passt? Minus", "Welche Rechenart passt? Mal/Geteilt"], "strategy": {"name": "5-Schritt-Lesestrategie", "example": "1 Frage · 2 wichtige Infos · 3 Skizze · 4 Rechnung · 5 Antwort", "say": "Ich rechne erst, wenn ich weiß, was gefragt ist."}, "practice": {"basis": ["Bearbeite zwei Bildgeschichten."], "standard": ["Löse vier gemischte Sachaufgaben mit Skizze."], "plus": ["Finde überflüssige Angaben oder eine fehlende Frage."]}, "game": {"title": "Geschichte zur Rechnung", "steps": ["Eine Rechnung wird gezogen.", "Erfindet gemeinsam eine passende Sachsituation.", "Partner prüft, ob sie wirklich passt."]}, "exit": ["Unterstreiche in einer Sachaufgabe die wichtige Zahl.", "Welche Rechnung passt zu: 12 Kinder, 4 gehen weg?", "Formuliere eine passende Antwort."], "materials": ["Sachaufgabenkarten", "Satzstarter"], "blitz_plus": ["Welche Information ist überflüssig?", "Erfinde eine Frage zu einer Rechnung.", "Sachaufgabe zu 36−8."]}, {"week": 37, "title": "Problemlösen", "goal": "Ich probiere systematisch und finde alle Möglichkeiten.", "blitz": ["__ + 7 = 20", "__ − 5 = 12", "Welche Zahl + 9 = 18?"], "strategy": {"name": "Ordnen statt raten", "example": "Möglichkeiten notieren → prüfen → abhaken", "say": "Ich arbeite systematisch, damit ich nichts vergesse."}, "practice": {"basis": ["Löse einfache Zahlenrätsel."], "standard": ["Finde mehrere Möglichkeiten bei Kombinationsaufgaben."], "plus": ["Begründe, warum du wirklich alle Lösungen gefunden hast."]}, "game": {"title": "Finde alle", "steps": ["Mit Ziffern 1, 2, 3 zweistellige Zahlen bilden.", "Jede Möglichkeit einmal notieren.", "Gemeinsam prüfen: fehlt etwas?"]}, "exit": ["Finde zwei Zahlen mit Summe 12.", "Wie weißt du, dass deine Lösung passt?", "Nenne noch eine andere mögliche Lösung."], "materials": ["Ziffernkarten", "Forscherblatt"], "blitz_plus": ["Alle Zahlenpaare mit Summe 15.", "Mit 1,2,3: alle zweistelligen Zahlen.", "Warum fehlt keine Lösung?"]}, {"week": 38, "title": "Jahresmix", "goal": "Ich erkenne, welche Strategie zu welcher Aufgabe passt.", "blitz": ["47 + 8", "63 − 7", "6 · 4", "20 : 5", "58 + 20"], "strategy": {"name": "Lesen – wählen – rechnen – prüfen", "example": "47 + 8 → Herzstrategie · 6 · 4 → Hilfsaufgabe", "say": "Ich entscheide zuerst, welche Idee mir hilft."}, "practice": {"basis": ["Bearbeite deinen persönlichen Förderkorb."], "standard": ["Bearbeite einen gemischten Jahres-Parcours."], "plus": ["Analysiere drei Fehler und erfinde eine eigene Knobelaufgabe."]}, "game": {"title": "Mathe-Quartett", "steps": ["Ordne Aufgabe, Ergebnis, Strategie und Darstellung.", "Punkt nur, wenn alle vier zusammenpassen."]}, "exit": ["Rechne: 48 + 27 = __", "Rechne: 73 − 18 = __", "Rechne: 7 · 6 = __"], "materials": ["Strategiekarten", "Jahresmix-Karten"], "blitz_plus": ["58+27", "72−19", "8·7 – welche Hilfsaufgabe?"]}, {"week": 39, "title": "Fit für Klasse 3", "goal": "Ich zeige, was ich sicher kann und was ich weiter üben möchte.", "blitz": ["8 + 7", "58 + 7", "72 − 8", "7 · 5", "24 : 4"], "strategy": {"name": "Meine besten Strategien", "example": "Ich kann erklären: Herzstrategie · kleine/große Aufgabe · Hilfsaufgabe", "say": "Ich kann nicht nur rechnen, sondern auch erklären, warum mein Weg funktioniert."}, "practice": {"basis": ["Bearbeite Aufgaben aus deinem persönlichen Übungsbereich."], "standard": ["Löse einen Jahresmix aus Plus, Minus, Mal, Geteilt."], "plus": ["Löse Transferaufgaben und erfinde eine Partner-Challenge."]}, "game": {"title": "Partner-Challenge", "steps": ["Erfinde drei gute Aufgaben.", "Partner löst und erklärt.", "Danach Rollen wechseln."]}, "exit": ["Rechne: 67 + 8 = __", "Rechne: 81 − 7 = __", "Nenne eine Strategie, die du sicher kannst."], "materials": ["persönliche Diagnosekarten", "Strategiekarten"], "blitz_plus": ["67+8", "81−7", "Welche Strategie nimmst du mit in Klasse 3?"]}];
+let wi=0, pi=0, showTeacher=false, timer=null, remaining=0;
+const phaseNames=["Start","Mathe-Blitz","Strategie","Übungszeit","Spiel","Exit"];
+const mins=[0,5,7,18,7,3];
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function weekList(){
+ const el=document.getElementById("weeklist"); el.innerHTML="";
+ weeks.forEach((w,i)=>{
+   const b=document.createElement("button"); b.className="weekbtn"+(i===wi?" active":"");
+   b.innerHTML=`<span>${String(w.week).padStart(2,"0")}</span>${w.title}`;
+   b.onclick=()=>{wi=i;pi=0;stopTimer();render();weekList();};
+   el.appendChild(b);
+ });
+}
+
+function numbered(items, className="big"){
+  return `<div class="${className} numbered-tasks">${items.map((x,i)=>
+    `<div class="numbered-task"><span class="task-no">${i+1}</span><span class="task-content">${esc(x)}</span></div>`
+  ).join("")}</div>`;
+}
+
+const phaseIcons=["","⚡","🧠","✏️","🤝","✅"];
+function phaseBar(){
+ return `<div class="phasebar">${phaseNames.slice(1).map((n,i)=>`<div class="phase ${pi===i+1?'active':''}"><span class="phaseicon">${phaseIcons[i+1]}</span><span>${i+1} · ${n}</span></div>`).join("")}</div>`;
+}
+function timerHtml(){
+ if(pi===0) return "";
+ return `<div class="timerbox"><div class="time" id="time">${String(mins[pi]).padStart(2,"0")}:00</div>
+ <button class="btn primary" onclick="startTimer()">Timer starten</button>
+ <button class="btn" onclick="stopTimer(true)">Zurücksetzen</button>
+ <span>Wenn die Zeit vorbei ist: direkt auf „Weiter“.</span></div>`;
+}
+function teacherHtml(w){
+ if(!showTeacher) return "";
+ let hint="";
+ if(pi===1) hint="Beobachten: Wer rechnet sicher? Wer zählt? Wer braucht Material?";
+ if(pi===2) hint="Ein Beispiel sichern – dann sofort die Kinder arbeiten lassen.";
+ if(pi===3) hint="Jetzt bei den Kindern sein: Beobachte nicht nur richtig/falsch, sondern Denkwege. Wer zählt? Wer nutzt Beziehungen? Wer kann Darstellungen wechseln? Wer erklärt? Gib möglichst eine weiterführende Frage statt einer Lösung: „Was weißt du schon?“, „Kannst du es zeigen?“, „Welche Hilfsaufgabe passt?“.";
+ if(pi===4) hint="Zuhören: Erklären die Kinder wirklich? Frage: „Was ist bei euren Wegen gleich?“";
+ if(pi===5) hint="Exit lesen: Verständnis, Strategie oder Automatisierung? Nächsten Schritt ableiten.";
+ return `<div class="teacher"><b>👩‍🏫 Kurz für die Lehrkraft:</b> ${hint}</div>`;
+}
+function qmHtml(w){
+ let q=[];
+ if(pi===1) q=[
+  ['🧠 Denken','Suche Beziehungen zu Aufgaben, die du schon kennst.'],
+  ['🔗 Vernetzen','Welche frühere Aufgabe hilft dir?'],
+  ['💬 Sprechen','Vergleiche einen Rechenweg mit deinem Partner.'],
+  ['🔎 Diagnose','Markiere, wo du noch zählen oder lange überlegen musst.']
+ ];
+ if(pi===2) q=[
+  ['👀 Darstellen','Zeige den Weg mit Material, Bild, Rechenstrich oder Rechnung.'],
+  ['🔗 Vernetzen','Verbinde die Darstellung mit Bekanntem.'],
+  ['💬 Erklären','Nutze: „Ich weiß …, deshalb …“'],
+  ['❓ Begründen','Warum funktioniert die Strategie?']
+ ];
+ if(pi===3) q=[
+  ['🟢 Anknüpfen','Beginne dort, wo du sicher arbeiten kannst.'],
+  ['🧠 Produktiv üben','Suche Muster, Beziehungen und Hilfsaufgaben.'],
+  ['💬 Austausch','Erkläre mindestens einen Weg und vergleiche ihn.'],
+  ['⭐ Weiterdenken','Begründe, vergleiche, finde Fehler oder erfinde Aufgaben.']
+ ];
+ if(pi===4) q=[
+  ['💬 Kommunizieren','Ergebnis allein reicht nicht – erkläre deinen Weg.'],
+  ['👂 Verstehen','Wiederhole den Weg deines Partners mit eigenen Worten.'],
+  ['🔁 Vergleichen','Was ist gleich? Was ist anders?'],
+  ['🧠 Aktiv denken','Fragt euch: „Warum?“ und „Woher weißt du das?“']
+ ];
+ if(pi===5) q=[
+  ['🔎 Zeigen','Das Exit-Ticket zeigt deinen aktuellen Lernstand.'],
+  ['🟢 Sicher','Ich kann es ohne Zählen und kann meinen Weg erklären.'],
+  ['🟡 Fast','Ich kann es mit einer Hilfe oder Darstellung.'],
+  ['🔴 Nächster Schritt','Ich brauche noch Material, Hilfsaufgabe oder Erklärung.']
+ ];
+ if(!q.length) return '';
+ return `<div class="qmstrip">${q.map(x=>`<div class="qmchip"><span class="comic-mini">${x[0].split(" ")[0]}</span><b>${x[0]}</b>${x[1]}</div>`).join('')}</div>`;
+}
+
+
+function modeBadge(type){
+ const m={alone:["👤","ALLEIN","mode-alone"],partner:["👥","PARTNER","mode-partner"],talk:["🔄","AUSTAUSCH","mode-talk"],free:["🎯","FREIE WAHL","mode-free"]}[type];
+ return `<span class="modebadge ${m[2]}">${m[0]} ${m[1]}</span>`;
+}
+function bulbList(items){
+ return `<div class="numbered-tasks">${items.map(x=>`<div class="numbered-task"><span class="task-no" style="background:#ffe36f">💡</span><span class="task-content">${esc(x)}</span></div>`).join("")}</div>`;
+}
+
+function render(){
+ const w=weeks[wi]; document.getElementById("topTitle").textContent=`Woche ${w.week} · ${w.title}`;
+ let body=`<div class="kicker">Woche ${w.week} · 40 Minuten</div><h1>${esc(w.title)}</h1><div class="goal">🎯 ${esc(w.goal)}</div>${phaseBar()}`;
+ if(pi===0){
+   body+=`<div class="panel"><h2><span class="heroicon">🚀</span>Heute trainieren wir</h2><div class="big">${esc(w.goal)}</div>
+   <div class="gamebox" style="margin-top:24px">
+     <div class="level" style="background:var(--yellow)"><h3>So läuft die Stunde</h3><ol class="steps"><li>5 Min Blitz</li><li>7 Min Strategie</li><li>18 Min Üben</li><li>7 Min Partner/Spiel</li><li>3 Min Exit</li></ol></div>
+     <div class="level"><h3>Material liegt bereit</h3><ul class="steps">${w.materials.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+   </div></div>`;
+ }
+ if(pi===1){
+   body+=`<div class="panel"><h2><span class="heroicon">⚡</span>Mathe-Blitz · 5 Minuten</h2>${modeBadge("alone")}
+   <div class="blitzgrid">
+    <div class="blitzmain"><h3>1–5 · zuerst</h3>${numbered(w.blitz)}</div>
+    <div class="blitzplus"><h3>💡 Weiterdenken · erst danach</h3><div class="locknote">Nur wenn 1–5 fertig sind.</div>${bulbList(w.blitz_plus)}</div>
+   </div></div>`;
+ }
+ if(pi===2){
+   body+=`<div class="panel"><h2><span class="heroicon">🧠</span>Strategie · ${esc(w.strategy.name)}</h2>
+   <div class="sequence">
+    <div class="seqstep">${modeBadge("alone")}<strong>1</strong>selbst machen</div>
+    <div class="seqstep">${modeBadge("partner")}<strong>2</strong>Weg zeigen</div>
+    <div class="seqstep">${modeBadge("talk")}<strong>3</strong>genau besprechen</div>
+   </div>
+   <div class="strategy"><div class="example">${esc(w.strategy.example)}</div>
+   <div class="say"><div><b>Genau besprechen:</b><br><br>„${esc(w.strategy.say)}“<br><br><b>Partnerfrage:</b> Warum funktioniert dieser Weg?</div></div></div>
+   </div>`;
+ }
+ if(pi===3){
+   body+=`<div class="panel"><h2><span class="heroicon">✏️</span>Übungszeit · 18 Minuten</h2>${modeBadge("free")}
+   <div class="tasks">
+    <div class="level" style="background:#eef7ec"><h3>🟢 BASIS</h3><ul>${w.practice.basis.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="level" style="background:#eef5fa"><h3>🔵 STANDARD</h3><ul>${w.practice.standard.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="level" style="background:#fff7e6"><h3>⭐ PLUS</h3><ul>${w.practice.plus.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+   </div>
+   
+   <div class="exchangebar">${modeBadge("talk")} <b>Wenn ihr beide fertig seid:</b> Sucht euch jeweils eine Aufgabe aus. Zeigt euch euren Rechenweg genau, erklärt warum er funktioniert, vergleicht eure Wege und stellt euch gegenseitig mindestens eine Frage.</div></div>`;
+ }
+ if(pi===4){
+   body+=`<div class="panel"><h2><span class="heroicon">🤝</span>${esc(w.game.title)} · 7 Minuten</h2>${modeBadge("partner")}
+   <div class="gamebox">
+    <div class="level" style="background:var(--orange)"><h3>So geht's</h3><ol class="steps">${w.game.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>
+    <div class="level"><h3>Partnerregel</h3><ul class="steps"><li>Nicht vorsagen.</li><li>Weg erklären.</li><li>Genau zuhören.</li><li>Nachfragen: „Warum?“</li></ul></div>
+   </div>
+   <div class="exchangebar">${modeBadge("talk")} <b>Wenn ihr fertig seid:</b> Tauscht euch aus: Was war heute wichtig? Wo hattet ihr unterschiedliche Wege? Welcher Weg war besonders geschickt?</div></div>`;
+ }
+ if(pi===5){
+   body+=`<div class="panel"><h2><span class="heroicon">✅</span>Exit-Ticket · 3 Minuten</h2>${modeBadge("alone")}
+   <div class="level" style="background:var(--green);padding:26px">${numbered(w.exit,"steps")}</div>
+   </div>`;
+ }
+ body += qmHtml(w)+teacherHtml(w)+timerHtml()+`<div class="navbottom"><button class="btn" onclick="prevPhase()">← Zurück</button><button class="btn primary" onclick="nextPhase()">Weiter →</button></div>
+ <div class="materials"><span class="mat-icon">🧰</span><span><b>Material:</b> ${w.materials.map(esc).join(" · ")}</span></div>
+ <div class="footerline"><span>Mathe-Übungsband Klasse 2</span><span>mit KI erstellt</span></div>`;
+ document.getElementById("card").innerHTML=body;
+}
+function nextPhase(){
+ stopTimer();
+ if(pi<5) pi++; else if(wi<weeks.length-1){wi++;pi=0;weekList();}
+ render();
+}
+function prevPhase(){
+ stopTimer();
+ if(pi>0) pi--; else if(wi>0){wi--;pi=5;weekList();}
+ render();
+}
+function toggleTeacher(){showTeacher=!showTeacher;render();}
+function toggleFullscreen(){document.body.classList.toggle("fullscreen");}
+function startTimer(){
+ stopTimer(); remaining=mins[pi]*60;
+ const tick=()=>{
+   const m=Math.floor(remaining/60),s=remaining%60; const el=document.getElementById("time");
+   if(el) el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+   if(remaining<=0){clearInterval(timer);timer=null; if(el) el.textContent="FERTIG"; return;}
+   remaining--;
+ };
+ tick(); timer=setInterval(tick,1000);
+}
+function stopTimer(reset=false){if(timer)clearInterval(timer);timer=null;if(reset&&pi>0){remaining=mins[pi]*60;render();}}
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight"||e.key===" "){e.preventDefault();nextPhase();}
+ if(e.key==="ArrowLeft"){e.preventDefault();prevPhase();}
+ if(e.key==="f")toggleFullscreen();
+});
+weekList(); render();
+</script>
+</body>
+</html>
